@@ -1,0 +1,12 @@
+# List Machine Image repositories one line at a time
+mi-cassandra
+mi-example
+mi-hadoop
+mi-java
+mi-mongodb
+mi-nodejs
+mi-percona
+mi-riak
+mi-standard
+mi-centos
+me-centos

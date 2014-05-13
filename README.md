@@ -93,6 +93,12 @@ To install git use:
 
 	pkgin install git-base
 
+Fix for cyrus-sasl and certs:
+
+	pkg_add -I http://pkgsrc.smartos.skylime.net/packages/SmartOS/2014Q1/x86_64/All/cyrus-sasl-2.1.26nb3.tgz
+	pkgin install mozilla-rootcerts
+	mozilla-rootcerts install
+
 ### Create buildzone
 
 Mibe needs a zone to work its magic. Create one with:

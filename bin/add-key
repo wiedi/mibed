@@ -1,3 +1,6 @@
 #!/bin/bash
 PREFIX="command=\"/opt/mibed/bin/gitreceive\",no-port-forwarding,no-X11-forwarding,no-pty"
 echo "$PREFIX $(cat)" >> /opt/mibed/home/.ssh/authorized_keys
+chmod 755 /opt/mibed/home/
+chmod 755 /opt/mibed/home/.ssh/
+chmod 644 /opt/mibed/home/.ssh/authorized_keys

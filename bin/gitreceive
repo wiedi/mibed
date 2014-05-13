@@ -1,0 +1,13 @@
+#!/bin/bash
+PATH="/opt/local/bin:$PATH"
+GITHOME=/opt/mibed/home
+export RECEIVE_REPO="$(echo $SSH_ORIGINAL_COMMAND | awk '{print $2}' | sed "s_\'__g;s_^/__;s_/_-_g")"
+REPO_PATH="$GITHOME/$RECEIVE_REPO"
+if [ ! -d $REPO_PATH ]; then
+	mkdir -p $REPO_PATH
+	cd $REPO_PATH
+	git init --bare > /dev/null
+	ln -s /opt/mibed/bin/hook $REPO_PATH/hooks/pre-receive
+fi
+cd $GITHOME
+git-shell -c "$SSH_ORIGINAL_COMMAND"

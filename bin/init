@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ -z "$(grep ^git: /etc/passwd)" ]]; then
+	echo "git:x:81:65534:Automatic MIBE builder:/opt/mibed/home:" >> /etc/passwd
+fi
+
+if [[ -z "$(grep ^git: /etc/shadow)" ]]; then
+	echo "git:*:::::::" >> /usbkey/shadow
+	umount /etc/shadow && mount -F lofs /usbkey/shadow /etc/shadow
+fi
+
+usermod -P'Primary Administrator' git
+
+chown git /opt/mibed/home
+chown git /opt/mibed/mibe/repos
+chown git /opt/mibed/mibe/images

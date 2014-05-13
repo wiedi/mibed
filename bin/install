@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir -p /opt/custom/smf
+cp /opt/mibed/share/mibed.xml /opt/custom/smf
+svccfg import /opt/custom/smf/mibed.xml
+
+if ! hash git 2>/dev/null; then
+	echo Please also install git from pkgsrc
+fi

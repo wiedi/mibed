@@ -1,0 +1,66 @@
+#!/bin/bash
+GITHOME=/opt/mibed/home
+MIBE_BUILD=/opt/mibed/mibe/bin/build_smartos
+RELDIR=/opt/mibed/mibe/images
+. /opt/mibed/config
+
+PATH="/usr/sbin:$PATH"
+
+while read oldrev newrev refname
+do
+	# Only run this script for the master branch. You can remove this 
+	# if block if you wish to run it for others as well.
+	if [[ $refname != "refs/heads/master" ]]; then
+		continue
+	fi
+
+	REPO=${RECEIVE_REPO}-${newrev}
+	WORKDIR="/opt/mibed/mibe/repos/$REPO"
+	mkdir -p "$WORKDIR"
+	git archive --format=tar $newrev | gtar -xf - -C "$WORKDIR"
+
+	if [[ ! -f "${WORKDIR}/manifest" ]]; then
+		echo Manifest missing
+		exit 1
+	fi
+
+	source "${WORKDIR}/manifest"
+
+	if [[ -z "$base" ]]; then
+		base=$(imgadm avail | grep base64 | tail -n 1 | awk '{ print $1 }')
+		echo No "base" defined in the manifest, using latest base64.
+	fi
+	pfexec imgadm import $base
+	pfexec $MIBE_BUILD $base $MIBE_ZONE "$REPO"
+
+	RELNAME=${name}-${version}
+	if [[ ! -z "$DSAPID" ]]; then
+		json -e 'public=true' -f ${RELDIR}/${RELNAME}.dsmanifest \
+			> ${RELDIR}/${RELNAME}.dsmanifest.public
+
+		echo Uploading to dsapid...
+		OUT=$(curl --progress-bar ${DSAPID}/api/upload \
+			-X POST \
+			-F manifest=@${RELDIR}/${RELNAME}.dsmanifest.public \
+			-F file=@${RELDIR}/${RELNAME}.zfs.gz)
+		UUID=$(echo $OUT | json uuid)
+		if [[ -z "$UUID" ]]; then
+			ERROR=$(echo $OUT | json error)
+			if [[ ! -z "$ERROR" ]]; then
+				echo dsapi error: $ERROR
+			else
+				echo Upload failed
+			fi
+			exit 1
+		fi
+		echo
+		echo UUID: $UUID
+		echo
+		pfexec rm ${RELDIR}/${RELNAME}.dsmanifest
+		pfexec rm ${RELDIR}/${RELNAME}.dsmanifest.public
+		pfexec rm ${RELDIR}/${RELNAME}.zfs.gz
+	fi
+	rm -rf ${WORKDIR}
+
+done
+

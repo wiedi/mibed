@@ -121,7 +121,8 @@ Mibe needs a zone to work its magic. Create one with:
 Install mibed to <code>/opt</code>:
 
 	cd /opt
-	curl https://github.com/wiedi/mibed/archive/v0.1.tar.gz | gzcat | tar -xf -
+	curl -Lk https://github.com/wiedi/mibed/archive/v0.1.tar.gz | gtar -zxf -
+	mv mibed-0.1/ mibed
 	/opt/mibed/bin/install
 
 Edit <code>/opt/mibed/config</code> to configure the UUID of the buildzone and the connection details to the dsapid:

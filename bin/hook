@@ -27,7 +27,7 @@ do
 	source "${WORKDIR}/manifest"
 
 	if [[ -z "$base" ]]; then
-		base=$(imgadm avail | grep base64 | tail -n 1 | awk '{ print $1 }')
+		base=$(pfexec imgadm avail | grep base64 | tail -n 1 | awk '{ print $1 }')
 		echo No "base" defined in the manifest, using latest base64.
 	fi
 	pfexec imgadm import $base

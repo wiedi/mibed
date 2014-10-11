@@ -8,16 +8,10 @@ PATH="/usr/sbin:$PATH"
 
 while read oldrev newrev refname
 do
-	# Only run this script for the master branch. You can remove this 
-	# if block if you wish to run it for others as well.
-	if [[ $refname != "refs/heads/master" ]]; then
-		continue
-	fi
-
 	REPO=${RECEIVE_REPO}-${newrev}
 	WORKDIR="/opt/mibed/mibe/repos/$REPO"
-	mkdir -p "$WORKDIR"
-	git archive --format=tar $newrev | gtar -xf - -C "$WORKDIR"
+	pfexec mkdir -p "$WORKDIR"
+	git archive --format=tar $newrev | pfexec gtar -xf - -C "$WORKDIR"
 
 	if [[ ! -f "${WORKDIR}/manifest" ]]; then
 		echo Manifest missing
@@ -60,7 +54,7 @@ do
 		pfexec rm ${RELDIR}/${RELNAME}.dsmanifest.public
 		pfexec rm ${RELDIR}/${RELNAME}.zfs.gz
 	fi
-	rm -rf ${WORKDIR}
+	pfexec rm -rf ${WORKDIR}
 
 done
 

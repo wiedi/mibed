@@ -1,5 +1,9 @@
 # mibed
 
+## ! THIS IS OBSOLETE !
+
+Not used anymore. This has been replaced by `dz build`. Check out <https://github.com/wiedi/deploy-zone#building-new-images>
+
 ## About
 
 Mibed allows you to easily create SmartOS zone datasets by doing a git push from a mibe repository.
